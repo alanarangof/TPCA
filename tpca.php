@@ -5,6 +5,8 @@
  * Date: 08/11/2015
  * Time: 17:56
  */
+
+//Convierte una matriz de adyacencia guardada en un csv en un array de dos dimensiones;
 function getGrafoFromFile ($file){
     $archivo = fopen($file, "r", 1) or die("No se puede abrir el archivo!");
     $array = array();
@@ -16,25 +18,30 @@ function getGrafoFromFile ($file){
     return $array;
 }
 
+//dado un grafo en forma de arraz de dos dimensiones devuelve la cantidad de nodos del mismo
 function getTamañoGrafo($grafo){
-    $tamaño=0;
+    $cantNodos=0;
     foreach ($grafo as $linea)
-        $tamaño++;
-    return $tamaño;
+        $cantNodos++;
+    return $cantNodos;
 
 }
-function inicializarGrafo($tamaño){
+
+//dada una cantidad de nodos, genera una matriz de adyacencia en un array de dos dimenciones con esa cantidad
+//de nodos con todos los valores en 0
+function inicializarGrafo($cantNodos){
     $lineaInicializada = array();
     $grafo = array();
-    for ($i=0;$i<$tamaño;$i++){
+    for ($i=0;$i<$cantNodos;$i++){
         array_push($lineaInicializada, 0);
     }
-    for ($i=0;$i<$tamaño;$i++){
+    for ($i=0;$i<$cantNodos;$i++){
         array_push($grafo, $lineaInicializada);
     }
     return $grafo;
 }
 
+//dado un grafo en forma de arraz de dos dimensiones muestra en pantalla la matriz de adyacencia
 function mostrarGrafo($grafo){
     foreach ($grafo as $nodo) {
         foreach ($nodo as $dato)
@@ -44,6 +51,7 @@ function mostrarGrafo($grafo){
     echo '<br>';
 }
 
+//dado un nodo en forma de array de una dimension devuelve el grado del mismo
 function getGrado($nodo){
     $grado = 0;
     foreach ($nodo as $eje){
@@ -53,6 +61,7 @@ function getGrado($nodo){
     return $grado;
 }
 
+//dado un grafo en forma de arraz de dos dimensiones devuelve un booleano en base a si el grafo tiene ciclos
 function tieneCiclos($grafo){
     $ejeRemovido = true;
     while ($ejeRemovido){
@@ -78,7 +87,8 @@ function tieneCiclos($grafo){
 
 }
 
-function getArbolMax ($grafoIn){
+//dado un grafo en forma de arraz de dos dimensiones devuelve el bosque generador máximo del mismo
+function getBosqueMax ($grafoIn){
     $tamaño = getTamañoGrafo($grafoIn);
     $grafoOut = inicializarGrafo($tamaño);
     for ($i=0;$i<$tamaño;$i++){
