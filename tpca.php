@@ -114,7 +114,7 @@ $grafoEntrada = getGrafoFromFile("grafo2.csv");
 echo "Grafo de entrada:".'<br>';
 mostrarGrafo($grafoEntrada);
 
-$grafoSalida = getArbolMax($grafoEntrada);
+$grafoSalida = getBosqueMax($grafoEntrada);
 
 echo "Grafo de salida:".'<br>';
 mostrarGrafo($grafoSalida);
