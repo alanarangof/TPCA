@@ -107,7 +107,25 @@ function getBosqueMax ($grafoIn){
     return $grafoOut;
 }
 
-//EJECUCI�N:
+function generate_Json($grafo){
+    $fh = fopen('data.json', 'w')  or die("Error al abrir fichero de salida");
+    fwrite($fh, "{ \n");
+    $i = 0;
+    $len = count(getCantNodosGrafo($grafo));
+    foreach($grafo as $row)
+    {
+        fwrite($fh, json_encode($row,JSON_UNESCAPED_UNICODE));
+        if ($i != $len - 1) {
+            // not the last
+            fwrite($fh, ",\n");
+        }
+        $i++;
+    }
+    fwrite($fh, "\n}");
+    fclose($fh);
+}
+
+//EJECUCIÓN:
 
 $grafoEntrada = getGrafoFromFile("grafo2.csv");
 
@@ -119,6 +137,7 @@ $grafoSalida = getBosqueMax($grafoEntrada);
 echo "Grafo de salida:".'<br>';
 mostrarGrafo($grafoSalida);
 
+generate_Json($grafoSalida);
 
 
 
