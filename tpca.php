@@ -19,7 +19,7 @@ function getGrafoFromFile ($file){
 }
 
 //dado un grafo en forma de arraz de dos dimensiones devuelve la cantidad de nodos del mismo
-function getTamañoGrafo($grafo){
+function getTamanoGrafo($grafo){
     $cantNodos=0;
     foreach ($grafo as $linea)
         $cantNodos++;
@@ -66,9 +66,9 @@ function tieneCiclos($grafo){
     $ejeRemovido = true;
     while ($ejeRemovido){
         $ejeRemovido = false;
-        for ($i=0;$i<getTamañoGrafo($grafo);$i++){
+        for ($i=0;$i<getTamanoGrafo($grafo);$i++){
             if (getGrado($grafo[$i]) == 1){
-                for ($j=0;$j<getTamañoGrafo($grafo);$j++){
+                for ($j=0;$j<getTamanoGrafo($grafo);$j++){
                     if ($grafo[$i][$j] == 1) {
                         $grafo[$i][$j] = 0;
                         $grafo[$j][$i] = 0;
@@ -87,11 +87,11 @@ function tieneCiclos($grafo){
 
 }
 
-//dado un grafo en forma de arraz de dos dimensiones devuelve el bosque generador máximo del mismo
+//dado un grafo en forma de arraz de dos dimensiones devuelve el bosque generador mï¿½ximo del mismo
 function getBosqueMax ($grafoIn){
-    $tamaño = getTamañoGrafo($grafoIn);
-    $grafoOut = inicializarGrafo($tamaño);
-    for ($i=0;$i<$tamaño;$i++){
+    $tamano = getTamanoGrafo($grafoIn);
+    $grafoOut = inicializarGrafo($tamano);
+    for ($i=0;$i<$tamano;$i++){
         for ($j=0;$j<$i;$j++){
             if ($grafoIn[$i][$j] == 1){
                 $grafoAux = $grafoOut;
@@ -107,7 +107,7 @@ function getBosqueMax ($grafoIn){
     return $grafoOut;
 }
 
-//EJECUCIÓN:
+//EJECUCIï¿½N:
 
 $grafoEntrada = getGrafoFromFile("grafo2.csv");
 
