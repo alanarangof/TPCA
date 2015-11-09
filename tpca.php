@@ -45,7 +45,7 @@ function inicializarGrafo($cantNodos){
 function mostrarGrafo($grafo){
     foreach ($grafo as $nodo) {
         foreach ($nodo as $dato)
-            echo $dato;
+            echo $dato.' ';
         echo '<br>';
     }
     echo '<br>';
