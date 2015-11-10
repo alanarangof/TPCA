@@ -5,6 +5,7 @@
  * Date: 08/11/2015
  * Time: 17:56
  */
+require('main.php');
 
 //Convierte una matriz de adyacencia guardada en un csv en un array de dos dimensiones;
 function getGrafoFromFile ($file){
@@ -107,27 +108,11 @@ function getBosqueMax ($grafoIn){
     return $grafoOut;
 }
 
-function generate_Json($grafo){
-    $fh = fopen('data.json', 'w')  or die("Error al abrir fichero de salida");
-    fwrite($fh, "{ \n");
-    $i = 0;
-    $len = count(getCantNodosGrafo($grafo));
-    foreach($grafo as $row)
-    {
-        fwrite($fh, json_encode($row,JSON_UNESCAPED_UNICODE));
-        if ($i != $len - 1) {
-            // not the last
-            fwrite($fh, ",\n");
-        }
-        $i++;
-    }
-    fwrite($fh, "\n}");
-    fclose($fh);
-}
 
 //EJECUCIÓN:
 
 $grafoEntrada = getGrafoFromFile("grafo2.csv");
+
 
 echo "Grafo de entrada:".'<br>';
 mostrarGrafo($grafoEntrada);
@@ -136,9 +121,114 @@ $grafoSalida = getBosqueMax($grafoEntrada);
 
 echo "Grafo de salida:".'<br>';
 mostrarGrafo($grafoSalida);
+jsonifyIn($grafoEntrada);
+jsonifyOut($grafoSalida);
 
-generate_Json($grafoSalida);
+function jsonifyIn($grafoSalida){
 
+    $DTOgrafo = new dtoGrafo();
+    $DTOEdge = new dtoEdge();
+    $size = 3;
+    $j=0;
+    $len = getCantNodosGrafo($grafoSalida);
+    $fh = fopen('datain.json', 'w')  or die ("Error al abrir fichero de salida");
+    fwrite($fh, "{ \n\"nodes\": [\n");
+    for ($i=0;$i<getCantNodosGrafo($grafoSalida);$i++) {
+
+        $DTOgrafo->setID("n".$i);
+        $DTOgrafo->setX(rand(0,20));
+        $DTOgrafo->setY(rand(0,20));
+        $DTOgrafo->setLabel("entrada");
+        $DTOgrafo->setSize($size);
+
+        fwrite($fh, json_encode($DTOgrafo,JSON_UNESCAPED_UNICODE));
+        if ($j < $len - 1) {
+            // not the last
+            fwrite($fh, ",\n");
+        }
+        $j++;
+    }
+    fwrite($fh, "\n],\n");
+
+    //ejes
+    fwrite($fh, " \n\"edges\": [\n");
+    $num=0;
+    for ($j=0;$j<getCantNodosGrafo($grafoSalida);$j++){
+        for ($k=0;$k<getCantNodosGrafo($grafoSalida);$k++){
+            if($grafoSalida[$j][$k]==1) {
+                $DTOEdge->setID("e".$num);
+                $DTOEdge->setSource("n".$j);
+                $DTOEdge->setTarget("n".$k);
+                fwrite($fh, json_encode($DTOEdge,JSON_UNESCAPED_UNICODE));
+                if ($k < $len) {
+                    // not the last
+                    fwrite($fh, ",\n");
+                }
+                $num++;
+            }
+        }
+
+
+    }
+    fwrite($fh, "\n]\n}");
+    fclose($fh);
+
+
+
+}
+
+function jsonifyOut($grafoSalida){
+
+    $DTOgrafo = new dtoGrafo();
+    $DTOEdge = new dtoEdge();
+    $size = 3;
+    $j=0;
+    $len = getCantNodosGrafo($grafoSalida);
+    $fh = fopen('dataout.json', 'w')  or die ("Error al abrir fichero de salida");
+    fwrite($fh, "{ \n\"nodes\": [\n");
+    for ($i=0;$i<getCantNodosGrafo($grafoSalida);$i++) {
+
+        $DTOgrafo->setID("n".$i);
+        $DTOgrafo->setX(rand(0,20));
+        $DTOgrafo->setY(rand(0,20));
+        $DTOgrafo->setLabel("salida");
+        $DTOgrafo->setSize($size);
+
+        fwrite($fh, json_encode($DTOgrafo,JSON_UNESCAPED_UNICODE));
+        if ($j < $len - 1) {
+            // not the last
+            fwrite($fh, ",\n");
+        }
+        $j++;
+    }
+    fwrite($fh, "\n],\n");
+
+    //ejes
+    fwrite($fh, " \n\"edges\": [\n");
+    $num=0;
+    for ($j=0;$j<getCantNodosGrafo($grafoSalida);$j++){
+        for ($k=0;$k<getCantNodosGrafo($grafoSalida);$k++){
+            if($grafoSalida[$j][$k]==1) {
+                $DTOEdge->setID("e".$num);
+                $DTOEdge->setSource("n".$j);
+                $DTOEdge->setTarget("n".$k);
+                fwrite($fh, json_encode($DTOEdge,JSON_UNESCAPED_UNICODE));
+                if ($j < $len - 1) {
+                    // not the last
+                    fwrite($fh, ",\n");
+                }
+                $num++;
+            }
+        }
+
+
+    }
+    fwrite($fh, "\n]\n}");
+    fclose($fh);
+
+
+
+}
 
 
 ?>
