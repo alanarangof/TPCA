@@ -138,7 +138,7 @@ function jsonifyIn($grafoEntrada){
         $DTOgrafo->setID("n".$i);
         $DTOgrafo->setX(rand(0,30));
         $DTOgrafo->setY(rand(0,30));
-        $DTOgrafo->setLabel("entrada");
+        $DTOgrafo->setLabel("n".$i);
         $DTOgrafo->setSize($size);
 
         fwrite($fh, json_encode($DTOgrafo,JSON_UNESCAPED_UNICODE));
@@ -191,7 +191,7 @@ function jsonifyOut($grafoSalida){
         $DTOgrafo->setID("n".$i);
         $DTOgrafo->setX(rand(0,30));
         $DTOgrafo->setY(rand(0,30));
-        $DTOgrafo->setLabel("salida");
+        $DTOgrafo->setLabel("n".$i);
         $DTOgrafo->setSize($size);
 
         fwrite($fh, json_encode($DTOgrafo,JSON_UNESCAPED_UNICODE));
