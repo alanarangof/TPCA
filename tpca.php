@@ -28,6 +28,19 @@ function getCantNodosGrafo($grafo){
 
 }
 
+function getCantEjesGrafo($grafo)
+{
+    $cantEjes = 0;
+    for ($i = 0; $i < getCantNodosGrafo($grafo); $i++) {
+        for ($j = $i + 1; $j < getCantNodosGrafo($grafo); $j++) {
+            if ($grafo[$i][$j] == 1)
+                $cantEjes++;
+        }
+
+    }
+    return $cantEjes;
+}
+
 //dada una cantidad de nodos, genera una matriz de adyacencia en un array de dos dimenciones con esa cantidad
 //de nodos con todos los valores en 0
 function inicializarGrafo($cantNodos){
@@ -121,10 +134,9 @@ $grafoSalida = getBosqueMax($grafoEntrada);
 
 echo "Grafo de salida:".'<br>';
 mostrarGrafo($grafoSalida);
-jsonifyIn($grafoEntrada);
-jsonifyOut($grafoSalida);
+jsonifyIn($grafoEntrada,$grafoSalida);
 
-function jsonifyIn($grafoEntrada){
+function jsonifyIn($grafoEntrada, $grafoSalida){
 
     $DTOgrafo = new dtoGrafo();
     $DTOEdge = new dtoEdge();
@@ -132,7 +144,9 @@ function jsonifyIn($grafoEntrada){
     $j=0;
     $len = getCantNodosGrafo($grafoEntrada);
     $fh = fopen('datain.json', 'w')  or die ("Error al abrir fichero de salida");
+    $fg = fopen('dataout.json', 'w')  or die ("Error al abrir fichero de salida");
     fwrite($fh, "{ \n\"nodes\": [\n");
+    fwrite($fg, "{ \n\"nodes\": [\n");
     for ($i=0;$i<getCantNodosGrafo($grafoEntrada);$i++) {
 
         $DTOgrafo->setID("n".$i);
@@ -142,94 +156,57 @@ function jsonifyIn($grafoEntrada){
         $DTOgrafo->setSize($size);
 
         fwrite($fh, json_encode($DTOgrafo,JSON_UNESCAPED_UNICODE));
+        fwrite($fg, json_encode($DTOgrafo,JSON_UNESCAPED_UNICODE));
         if ($j < $len - 1) {
             // not the last
             fwrite($fh, ",\n");
+            fwrite($fg, ",\n");
         }
         $j++;
     }
     fwrite($fh, "\n],\n");
-
+    fwrite($fg, "\n],\n");
     //ejes
     fwrite($fh, " \n\"edges\": [\n");
-    $num=0;
-    for ($j=0;$j<getCantNodosGrafo($grafoEntrada);$j++){
-        for ($k=$j+1;$k<getCantNodosGrafo($grafoEntrada);$k++){
-            if($grafoEntrada[$j][$k]==1) {
-                $DTOEdge->setID("e".$num);
-                $DTOEdge->setSource("n".$j);
-                $DTOEdge->setTarget("n".$k);
+    fwrite($fg, " \n\"edges\": [\n");
+    $num1=0;
+    for ($j1=0;$j1<getCantNodosGrafo($grafoEntrada);$j1++){
+        for ($k1=$j1+1;$k1<getCantNodosGrafo($grafoEntrada);$k1++){
+            if($grafoEntrada[$j1][$k1]==1) {
+                $DTOEdge->setID("e".$num1);
+                $DTOEdge->setSource("n".$j1);
+                $DTOEdge->setTarget("n".$k1);
                 fwrite($fh, json_encode($DTOEdge,JSON_UNESCAPED_UNICODE));
-                if ($j < $len && $k< $len )
-                    // not the last
-                    fwrite($fh, ",\n");
-
-                $num++;
-            }
-        }
-
-
-    }
-    fwrite($fh, "\n]\n}");
-    fclose($fh);
-
-
-
-}
-
-function jsonifyOut($grafoSalida){
-
-    $DTOgrafo = new dtoGrafo();
-    $DTOEdge = new dtoEdge();
-    $size = 3;
-    $j=0;
-    $len = getCantNodosGrafo($grafoSalida);
-    $fh = fopen('dataout.json', 'w')  or die ("Error al abrir fichero de salida");
-    fwrite($fh, "{ \n\"nodes\": [\n");
-    for ($i=0;$i<getCantNodosGrafo($grafoSalida);$i++) {
-
-        $DTOgrafo->setID("n".$i);
-        $DTOgrafo->setX(rand(0,30));
-        $DTOgrafo->setY(rand(0,30));
-        $DTOgrafo->setLabel("n".$i);
-        $DTOgrafo->setSize($size);
-
-        fwrite($fh, json_encode($DTOgrafo,JSON_UNESCAPED_UNICODE));
-        if ($j < $len - 1) {
-            // not the last
-            fwrite($fh, ",\n");
-        }
-        $j++;
-    }
-    fwrite($fh, "\n],\n");
-
-    //ejes
-    fwrite($fh, " \n\"edges\": [\n");
-    $num=0;
-    for ($j=0;$j<getCantNodosGrafo($grafoSalida);$j++){
-        for ($k=$j+1;$k<getCantNodosGrafo($grafoSalida);$k++){
-            if($grafoSalida[$j][$k]==1) {
-                $DTOEdge->setID("e".$num);
-                $DTOEdge->setSource("n".$j);
-                $DTOEdge->setTarget("n".$k);
-                fwrite($fh, json_encode($DTOEdge,JSON_UNESCAPED_UNICODE));
-                if ($j < $len -1 && $k < $len -1) {
+                $num1++;
+                if ($num1<getCantEjesGrafo($grafoEntrada)) {
                     // not the last
                     fwrite($fh, ",\n");
                 }
-                $num++;
+
             }
-
         }
-
-
     }
+    $num2=0;
+    for ($j=0;$j<getCantNodosGrafo($grafoSalida);$j++){
+        for ($k=$j+1;$k<getCantNodosGrafo($grafoSalida);$k++){
+            if($grafoSalida[$j][$k]==1) {
+                $DTOEdge->setID("e".$num2);
+                $DTOEdge->setSource("n".$j);
+                $DTOEdge->setTarget("n".$k);
+                fwrite($fg, json_encode($DTOEdge,JSON_UNESCAPED_UNICODE));
+                $num2++;
+                if ($num2<getCantEjesGrafo($grafoSalida)) {
+                    // not the last
+                    fwrite($fg, ",\n");
+                }
+
+            }
+        }
+    }
+
     fwrite($fh, "\n]\n}");
+    fwrite($fg, "\n]\n}");
     fclose($fh);
-
-
-
+    fclose($fg);
 }
-
-
 ?>
