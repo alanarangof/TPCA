@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Created by PhpStorm.
@@ -77,27 +78,31 @@ function getGrado($nodo){
 
 //dado un grafo en forma de arraz de dos dimensiones devuelve un booleano en base a si el grafo tiene ciclos
 function tieneCiclos($grafo){
-    $ejeRemovido = true;
-    while ($ejeRemovido){
-        $ejeRemovido = false;
-        for ($i=0;$i<getCantNodosGrafo($grafo);$i++){
-            if (getGrado($grafo[$i]) == 1){
-                for ($j=0;$j<getCantNodosGrafo($grafo);$j++){
-                    if ($grafo[$i][$j] == 1) {
-                        $grafo[$i][$j] = 0;
-                        $grafo[$j][$i] = 0;
-                    }
-                }
-                $ejeRemovido = true;
+    $nodoRemovido = true;
+    $cantNodos = getCantNodosGrafo($grafo);
+    //Para detectar ciclos utilizo el metodo visto en clase que consiste en eliminar nodos de grado <= a 1
+    while ($nodoRemovido){//siempre y cuando pueda remover un nodo continuo
+        $nodoRemovido = false;
+        for ($i=0;$i<$cantNodos;$i++){ //recorro nodo por nodo
+            $gradoNodo = getGrado($grafo[$i]);
+            if ($gradoNodo <= 1){ //verifico si el nodo tiene grado <= 1
+                //si es asi, remuevo el nodo
+                unset ($grafo[$i]); //remuevo fila del nodo de la matriz
+                foreach ($grafo as &$nodo) //remuevo columna del nodo de la matriz
+                    unset ($nodo[$i]);
+                $nodoRemovido = true;
             }
         }
+        $grafo = array_values($grafo); //reindexo el grafo
+        $cantNodos = getCantNodosGrafo($grafo); //actualizo cantidad de nodos
     }
 
-    foreach ($grafo as $nodo)
-        if (getGrado($nodo) > 0)
-            return true;
-
-    return false;
+    //si queda algun nodo en el grafo, tiene ciclos
+    if (count($grafo) > 0)
+        return true;
+    //si no quedan nodos no tiene ciclos
+    else
+        return false;
 
 }
 
@@ -105,13 +110,14 @@ function tieneCiclos($grafo){
 function getBosqueMax ($grafoIn){
     $cantNodos = getCantNodosGrafo($grafoIn);
     $grafoOut = inicializarGrafo($cantNodos);
-    for ($i=0;$i<$cantNodos;$i++){
-        for ($j=0;$j<$i;$j++){
+    //aplico un algoritmo similar a Prim agregando cada eje y checkeando que no genere ciclos
+    for ($i=0;$i<$cantNodos;$i++){ //recorro cada nodo
+        for ($j=0;$j<$i;$j++){ //para optiizar el tiempo de ejecución reviso los ejes del nodo anteriores a la diagonal, ya que al no ser dirigido el grafo la matriz está espejada por la diagonal
             if ($grafoIn[$i][$j] == 1){
                 $grafoAux = $grafoOut;
-                $grafoAux[$i][$j] = 1;
-                $grafoAux[$j][$i] = 1;
-                if (!tieneCiclos($grafoAux)){
+                $grafoAux[$i][$j] = 1;//agrego eje
+                $grafoAux[$j][$i] = 1;//agrego el mismo eje en el nodo opuesto ya que no es dirigido el grafo
+                if (!tieneCiclos($grafoAux)){ //si el eje no generó un ciclos, guardo el grafo
                     $grafoOut = $grafoAux;
                 }
 
@@ -121,23 +127,9 @@ function getBosqueMax ($grafoIn){
     return $grafoOut;
 }
 
-
-//EJECUCIÓN:
-
-$grafoEntrada = getGrafoFromFile("grafo2.csv");
-
-
-echo "Grafo de entrada:".'<br>';
-mostrarGrafo($grafoEntrada);
-
-$grafoSalida = getBosqueMax($grafoEntrada);
-
-echo "Grafo de salida:".'<br>';
-mostrarGrafo($grafoSalida);
-jsonifyIn($grafoEntrada,$grafoSalida);
-
 function jsonifyIn($grafoEntrada, $grafoSalida){
-
+    $xPos = Array(0,1,0,1,2,3,2,3,0,1,2,3);
+    $yPos = Array(0,0.5,1,1.5,0,0.5,1,1.5,2,2.5,2,2.5);
     $DTOgrafo = new dtoGrafo();
     $DTOEdge = new dtoEdge();
     $size = 3;
@@ -150,8 +142,8 @@ function jsonifyIn($grafoEntrada, $grafoSalida){
     for ($i=0;$i<getCantNodosGrafo($grafoEntrada);$i++) {
 
         $DTOgrafo->setID("n".$i);
-        $DTOgrafo->setX(rand(0,30));
-        $DTOgrafo->setY(rand(0,30));
+        $DTOgrafo->setX($xPos[$i]);
+        $DTOgrafo->setY($yPos[$i]);
         $DTOgrafo->setLabel("n".$i);
         $DTOgrafo->setSize($size);
 
@@ -208,5 +200,23 @@ function jsonifyIn($grafoEntrada, $grafoSalida){
     fwrite($fg, "\n]\n}");
     fclose($fh);
     fclose($fg);
+}
+
+
+
+//EJECUCIÓN:
+if (isset($_GET['file'])){
+    $grafoEntrada = getGrafoFromFile($_GET['file']);
+
+
+    echo "Grafo de entrada:" . '<br>';
+    mostrarGrafo($grafoEntrada);
+
+
+    $grafoSalida = getBosqueMax($grafoEntrada);
+
+    echo "Grafo de salida:" . '<br>';
+    mostrarGrafo($grafoSalida);
+    jsonifyIn($grafoEntrada, $grafoSalida);
 }
 ?>
