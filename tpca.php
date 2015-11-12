@@ -128,8 +128,8 @@ function getBosqueMax ($grafoIn){
 }
 
 function jsonifyIn($grafoEntrada, $grafoSalida){
-    $xPos = Array(0,1,0,1,2,3,2,3,0,1,2,3);
-    $yPos = Array(0,0.5,1,1.5,0,0.5,1,1.5,2,2.5,2,2.5);
+    $xPos = Array(0,1,0.2,1.2,2,3,2.2,3.2,0.4,1.4,2.4,3.4);
+    $yPos = Array(0,0.5,1,1.25,0.75,0.25,0.45,1.5,2.25,2.75,2.5,1.75);
     $DTOgrafo = new dtoGrafo();
     $DTOEdge = new dtoEdge();
     $size = 3;

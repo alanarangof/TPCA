@@ -5,7 +5,8 @@
 <div>
     <form method="post" action="tpca.php">
         <select class="grafos" id="select" onchange="selectGrafo()">
-        <option class="grafo1" id="grafo1" value="grafo1" selected>Grafo 1</option>
+        <option class="grafo" id="none" value="none" selected>Seleccione</option>
+        <option class="grafo1" id="grafo1" value="grafo1">Grafo 1</option>
         <option class="grafo2" id="grafo2" value="grafo2">Grafo 2</option>
         <option class="grafo3" id="grafo3" value="grafo3">Grafo 3</option>
         <option class="grafo4" id="grafo4" value="grafo4">Grafo 4</option>
@@ -24,14 +25,21 @@
 function selectGrafo(){
     var xmlhttp = new XMLHttpRequest();
     var file = document.getElementById("select").value;
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            response = xmlhttp.responseText;
-            document.getElementById("display").innerHTML = response;
+    if (file != "none"){
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                response = xmlhttp.responseText;
+                document.getElementById("display").innerHTML = response;
+            }
         }
+        xmlhttp.open("GET", "tpca.php?file=" + file + ".csv", true);
+        xmlhttp.send();
     }
-    xmlhttp.open("GET", "tpca.php?file=" + file + ".csv", true);
-    xmlhttp.send();
+    else
+    {
+        document.getElementById("display").innerHTML = "";
+    }
+
 
 }
 
