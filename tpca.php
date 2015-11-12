@@ -6,7 +6,7 @@
  * Date: 08/11/2015
  * Time: 17:56
  */
-require('main.php');
+require('dtos.php');
 
 //Convierte una matriz de adyacencia guardada en un csv en un array de dos dimensiones;
 function getGrafoFromFile ($file){
