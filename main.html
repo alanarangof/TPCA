@@ -12,6 +12,12 @@
         <option class="grafo5" id="grafo5" value="grafo5">Grafo 5</option>
         </select>
     </form>
+    <p id="display"></p>
+
+    <a href="entrada.html">Entrada</a>
+
+    <a href="salida.html">Salida</a>
+
 
 </div>
 <script>
@@ -21,6 +27,7 @@ function selectGrafo(){
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             response = xmlhttp.responseText;
+            document.getElementById("display").innerHTML = response;
         }
     }
     xmlhttp.open("GET", "tpca.php?file=" + file + ".csv", true);

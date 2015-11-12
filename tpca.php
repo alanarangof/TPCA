@@ -20,7 +20,7 @@ function getGrafoFromFile ($file){
     return $array;
 }
 
-//dado un grafo en forma de arraz de dos dimensiones devuelve la cantidad de nodos del mismo
+//dado un grafo en forma de array de dos dimensiones devuelve la cantidad de nodos del mismo
 function getCantNodosGrafo($grafo){
     $cantNodos=0;
     foreach ($grafo as $linea)
@@ -106,7 +106,7 @@ function tieneCiclos($grafo){
 
 }
 
-//dado un grafo en forma de arraz de dos dimensiones devuelve el bosque generador m�ximo del mismo
+//dado un grafo en forma de arraz de dos dimensiones devuelve el bosque generador maximo del mismo
 function getBosqueMax ($grafoIn){
     $cantNodos = getCantNodosGrafo($grafoIn);
     $grafoOut = inicializarGrafo($cantNodos);
